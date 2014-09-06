@@ -37,11 +37,13 @@ LOCAL_C_INCLUDES += \
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/libiconv/include \
                    $(LOCAL_PATH)/libiconv/libcharset \
                    $(LOCAL_PATH)/libiconv/libcharset/include \
-                   $(LOCAL_PATH)/../gen
-LOCAL_CFLAGS += -I$(LOCAL_PATH) -I$(LOCAL_PATH)/vim/src/ -I$(LOCAL_PATH)/vim/src/proto -I$(LOCAL_PATH)/libncurses/include -DUNIX -DHAVE_CONFIG_H
+                   $(LOCAL_PATH)/../gen \
+		   $(LOCAL_PATH)/liblua/src/src \
+		   $(LOCAL_PATH)/liblua/luasocket/src
+LOCAL_CFLAGS += -I$(LOCAL_PATH) -I$(LOCAL_PATH)/vim/src/ -I$(LOCAL_PATH)/vim/src/proto -I$(LOCAL_PATH)/libncurses/include -DUNIX -DHAVE_CONFIG_H -I$(LOCAL_PATH)/liblua/src/src
 LOCAL_CFLAGS += -DLIBDIR=\"\" -DTARGET_ARCH_ABI=\"$(TARGET_ARCH_ABI)\"
 LOCAL_SHARED_LIBRARIES := \
-	libutils libdl 
+	libutils libdl
 
 LOCAL_LDLIBS := -llog
 
@@ -65,7 +67,6 @@ LOCAL_SRC_FILES:= \
   clipboard.c\
   exit.c\
   misc.c\
-  version.c\
   libiconv/lib/iconv.c \
   libiconv/libcharset/lib/localcharset.c \
   libiconv/lib/relocatable.c \
@@ -87,6 +88,7 @@ LOCAL_SRC_FILES:= \
   vim/src/hardcopy.c\
   vim/src/hashtab.c\
   vim/src/if_cscope.c\
+  vim/src/if_lua.c\
   vim/src/if_xcmdsrv.c\
   vim/src/mark.c\
   vim/src/memline.c\
@@ -112,19 +114,22 @@ LOCAL_SRC_FILES:= \
   vim/src/term.c\
   vim/src/ui.c\
   vim/src/undo.c\
+  vim/src/version.c\
   vim/src/window.c\
   vim/src/netbeans.c\
   vim/src/memfile.c
 
 # No static libraries.
-LOCAL_STATIC_LIBRARIES := libncurses
+LOCAL_STATIC_LIBRARIES :=  liblua libncurses
 
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/libiconv/include \
                    $(LOCAL_PATH)/libiconv/libcharset \
-                   $(LOCAL_PATH)/libiconv/libcharset/include 
+                   $(LOCAL_PATH)/libiconv/libcharset/include \
+		   $(LOCAL_PATH)/liblua/src/src \
+		   $(LOCAL_PATH)/liblua/luasocket/src
 
 # No special compiler flags.
-LOCAL_CFLAGS += -I$(LOCAL_PATH) -I$(LOCAL_PATH)/vim/src/ -I$(LOCAL_PATH)/vim/src/proto -I$(LOCAL_PATH)/libncurses/include -DUNIX -DHAVE_CONFIG_H
+LOCAL_CFLAGS += -I$(LOCAL_PATH) -I$(LOCAL_PATH)/vim/src/ -I$(LOCAL_PATH)/vim/src/proto -I$(LOCAL_PATH)/libncurses/include -DUNIX -DHAVE_CONFIG_H -I$(LOCAL_PATH)/liblua/src/src
 LOCAL_CFLAGS += -DLIBDIR=\"\" -DTARGET_ARCH_ABI=\"$(TARGET_ARCH_ABI)\"
 
 # Don't prelink this library.  For more efficient code, you may want
@@ -136,6 +141,7 @@ LOCAL_PRELINK_MODULE := false
 
 include $(BUILD_EXECUTABLE)
 
+include $(VIMTOUCH)/liblua/Android.mk
 include $(VIMTOUCH)/libncurses/Android.mk
 
 

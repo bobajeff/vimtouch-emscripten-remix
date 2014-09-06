@@ -10,17 +10,17 @@ else
 fi
 
 cd jni
-wget ftp://ftp.vim.org/pub/vim/unix/vim-7.3.tar.bz2
-tar jxvf vim-7.3.tar.bz2
-mv vim73 vim
+wget ftp://ftp.vim.org/pub/vim/unix/vim-7.4.tar.bz2
+tar jxvf vim-7.4.tar.bz2
+mv vim74 vim
 rm vim/src/auto/config.h
 rm vim/src/feature.h
-rm vim-7.3.tar.bz2
+rm vim-7.4.tar.bz2
 wget http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz
 tar xzvf libiconv-1.14.tar.gz
 mv libiconv-1.14 libiconv
 rm libiconv-1.14.tar.gz
-git clone git@github.com:momodalo/android_external_libncurses.git -b vimtouch libncurses
+git clone https://github.com/momodalo/android_external_libncurses.git -b vimtouch libncurses
 cd ..
 
 # extract latest platform:

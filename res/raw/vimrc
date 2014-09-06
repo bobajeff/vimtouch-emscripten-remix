@@ -28,3 +28,27 @@ set smartindent
 set fileencodings=utf-8,big5,euc-jp,gbk,euc-kr,utf-bom,iso8859-1
 set encoding=utf8
 set tenc=utf8
+
+" EXPORT PATHS
+
+let $PYTHONHOME='/data/data/net.momodalo.app.vimtouch/files/python'
+let $PYTHONPATH='/sdcard/com.android.python27/extras/python:/data/data/net.momodalo.app.vimtouch/files/python/lib/python2.7/lib-dynload:/data/data/net.momodalo.app.vimtouch/files/python/lib/python2.7'
+let $LD_LIBRARY_PATH=$LD_LIBRARY_PATH . ':/data/data/net.momodalo.app.vimtouch/files/python/lib:/data/data/net.momodalo.app.vimtouch/files/python/lib/python2.7/lib-dynload'
+let $FASTCOMP_BIN_DIR='/data/data/net.momodalo.app.vimtouch/files/fastcomp/bin'
+
+let $PATH=$PYTHONHOME . '/bin:' . '/data/data/net.momodalo.app.vimtouch/files/busybox/bin:' . $PATH . ':' . $FASTCOMP_BIN_DIR
+let $RUN_EMCC='python /data/data/net.momodalo.app.vimtouch/files/emscripten-1.22.1/emcc'
+let $EM_CONFIG='/data/data/net.momodalo.app.vimtouch/files/.emscripten'
+
+" NEOCOMPLETE
+
+let g:neocomplete#enable_at_startup = 1
+if !exists('g:neocomplete#sources#include#paths')
+let g:neocomplete#sources#include#paths = {}
+endif
+let g:neocomplete#sources#include#paths.cpp = '/data/data/net.momodalo.app.vimtouch/files/emscripten-1.22.1/system/local/include,'.'/data/data/net.momodalo.app.vimtouch/files/emscripten-1.22.1/system/include/compat,'.'/data/data/net.momodalo.app.vimtouch/files/emscripten-1.22.1/system/include,'.'/data/data/net.momodalo.app.vimtouch/files/emscripten-1.22.1/system/include/emscripten,'.'/data/data/net.momodalo.app.vimtouch/files/emscripten-1.22.1/system/include/libc,'.'/data/data/net.momodalo.app.vimtouch/files/emscripten-1.22.1/system/include/gfx,'.'/data/data/net.momodalo.app.vimtouch/files/emscripten-1.22.1/system/include/SDL,'.'/data/data/net.momodalo.app.vimtouch/files/emscripten-1.22.1/system/include/libcxx'
+
+" SYNTASTIC
+let g:syntastic_cpp_compiler = 'clang++'
+let g:syntastic_cpp_compiler_options = '-Wall -Wextra -Werror -Wc++98-compat -Wno-long-long -Wno-variadic-macros -fexceptions -DNDEBUG -D__EMSCRIPTEN__ -U__MMX__ -U__SSE__ -x c++ -isystem/data/data/net.momodalo.app.vimtouch/files/emscripten-1.22.1/system/local/include -isystem/data/data/net.momodalo.app.vimtouch/files/emscripten-1.22.1/system/include/compat -isystem/data/data/net.momodalo.app.vimtouch/files/emscripten-1.22.1/system/include -isystem/data/data/net.momodalo.app.vimtouch/files/emscripten-1.22.1/system/include/emscripten -isystem/data/data/net.momodalo.app.vimtouch/files/emscripten-1.22.1/system/include/libc -isystem/data/data/net.momodalo.app.vimtouch/files/emscripten-1.22.1/system/include/gfx -isystem/data/data/net.momodalo.app.vimtouch/files/emscripten-1.22.1/system/include/SDL -isystem/data/data/net.momodalo.app.vimtouch/files/emscripten-1.22.1/system/include/libcxx'
+let g:syntastic_cpp_check_header = 1

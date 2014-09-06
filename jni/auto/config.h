@@ -318,7 +318,7 @@
 /* #undef FEAT_HUGE */
 
 /* Define if you want to include the Lua interpreter. */
-/* #undef FEAT_LUA */
+#define FEAT_LUA 1
 
 /* Define for linking via dlopen() or LoadLibrary() */
 /* #undef DYNAMIC_LUA */

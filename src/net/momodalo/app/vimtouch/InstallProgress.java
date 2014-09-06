@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,6 +44,8 @@ import net.momodalo.app.vimtouch.addons.RuntimeFactory;
 import net.momodalo.app.vimtouch.addons.RuntimeAddOn;
 import net.momodalo.app.vimtouch.addons.PluginFactory;
 import net.momodalo.app.vimtouch.addons.PluginAddOn;
+
+import com.spartacusrex.spartacuside.startup.setup.filemanager;
 
 public class InstallProgress extends Activity {
     public static final String LOG_TAG = "VIM Installation";
@@ -88,6 +91,7 @@ public class InstallProgress extends Activity {
         installZip(getResources().openRawResource(R.raw.terminfo),null, "Terminfo");
 
         installSysVimrc(this);
+        installBusybox(this);
 
         } catch(Exception e) { 
             Log.e(LOG_TAG, "install vim runtime or compute md5 error", e); 
@@ -167,6 +171,159 @@ public class InstallProgress extends Activity {
 
         File tmp = new File(activity.getApplicationContext().getFilesDir()+"/tmp");
         tmp.mkdir();
+    }
+    
+    public void installBusybox(Activity activity) {
+
+        try {
+
+        	
+            //Create a working Directory
+            File tmp = new File(activity.getApplicationContext().getFilesDir()+"/tmp");
+            if (!tmp.exists()) {
+                tmp.mkdirs();
+            }
+            File busyboxbin = new File(activity.getApplicationContext().getFilesDir()+"/busybox/bin");
+            if (!busyboxbin.exists()) {
+            	busyboxbin.mkdirs();
+            }
+            File filesdir = new File(activity.getApplicationContext().getFilesDir()+"/");
+            
+            //Vim directory
+            File vimdir = new File(activity.getApplicationContext().getFilesDir()+"/vim");
+
+            //Working directory
+            File worker = new File(tmp,"WORK_"+System.currentTimeMillis());
+            if(!worker.exists()){
+                worker.mkdirs();
+            }
+
+            //Extract the assets..
+
+            File busytar = new File(busyboxbin, "busybox");
+            if(busytar.exists()){
+               busytar.delete();
+            }
+
+            ContextWrapper context;
+			//Extract BusyBox, need it just for ln and cp
+            filemanager.extractAsset(activity.getApplicationContext(), "busybox.mp3", busytar);
+
+            //Set up a simple environment
+            String[] env = new String[2];
+            env[0] = "PATH=/sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin";
+            env[1] = "LD_LIBRARY_PATH=/vendor/lib:/system/lib";
+
+            //Set executable - This *needs* chmod on the phone..
+//          Process pp = Runtime.getRuntime().exec("chmod 770 "+busytar.getPath());
+            Process pp = Runtime.getRuntime().exec("chmod 770 "+busytar.getPath(),env,busyboxbin);
+            pp.waitFor();
+
+            //extract neocomplete
+        	//give out message
+	        mProgressBar.setProgress(0);
+	        mProgressBar.setMax(100);
+	        mHandler.sendMessage(mHandler.obtainMessage(MSG_SET_TEXT, "Untarring Neocomplete..."));
+	           	//get asset
+	        File neocomplete = new File(worker, "neocomplete.tar.gz");
+	        filemanager.extractAsset(activity.getApplicationContext(), "neocomplete.tar.gz.mp3", neocomplete);
+	        	//run untar command
+	        pp = Runtime.getRuntime().exec(busytar.getPath()+" tar -C "+vimdir.getPath()+" -xzf "+neocomplete.getPath(),env,vimdir);
+	        pp.waitFor();
+	        
+            //extract syntastic
+        	//give out message
+	        mProgressBar.setProgress(2);
+	        mProgressBar.setMax(100);
+	        mHandler.sendMessage(mHandler.obtainMessage(MSG_SET_TEXT, "Untarring Syntastic..."));
+	           	//get asset
+	        File syntastic = new File(worker, "syntastic.tar.gz");
+	        filemanager.extractAsset(activity.getApplicationContext(), "syntastic.tar.gz.mp3", syntastic);
+	        	//run untar command
+	        pp = Runtime.getRuntime().exec(busytar.getPath()+" tar -C "+vimdir.getPath()+" -xzf "+syntastic.getPath(),env,vimdir);
+	        pp.waitFor();
+            
+            //extract pythondata
+            	//give out message
+            mProgressBar.setProgress(4);
+            mHandler.sendMessage(mHandler.obtainMessage(MSG_SET_TEXT, "Untarring Python..."));
+               	//get asset
+            File pythondata = new File(worker, "python.data.tar.gz");
+            filemanager.extractAsset(activity.getApplicationContext(), "python.data.tar.gz.mp3", pythondata);
+            	//run untar command
+            pp = Runtime.getRuntime().exec(busytar.getPath()+" tar -C "+filesdir.getPath()+" -xzf "+pythondata.getPath(),env,filesdir);
+            pp.waitFor();
+            
+            //extract pythonsdcard
+        	//give out message
+	        mProgressBar.setProgress(7);
+            File pythonextradir = new File("/sdcard/com.android.python27/extras");
+            if (!pythonextradir.exists()) {
+    	        mHandler.sendMessage(mHandler.obtainMessage(MSG_SET_TEXT, "Untarring Python Extras..."));
+            	pythonextradir.mkdirs();
+	           	//get asset
+		        File pythonsdcard = new File(worker, "python.sdcard.tar.gz");
+		        filemanager.extractAsset(activity.getApplicationContext(), "python.sdcard.tar.gz.mp3", pythonsdcard);
+		        	//run untar command
+		        pp = Runtime.getRuntime().exec(busytar.getPath()+" tar -C "+pythonextradir+" -xzf "+pythonsdcard.getPath(),env,filesdir);
+		        pp.waitFor();
+            }
+    
+            //extract node.js
+        	//give out message
+	        mProgressBar.setProgress(13);
+	        mHandler.sendMessage(mHandler.obtainMessage(MSG_SET_TEXT, "Untarring Node.js..."));
+	           	//get asset
+	        File nodedata = new File(worker, "node.data.tar.gz");
+	        filemanager.extractAsset(activity.getApplicationContext(), "node.data.tar.gz.mp3", nodedata);
+	        	//run untar command
+	        pp = Runtime.getRuntime().exec(busytar.getPath()+" tar -C "+filesdir.getPath()+" -xzf "+nodedata.getPath(),env,filesdir);
+	        pp.waitFor();
+	        
+            //extract fastcomp
+        	//give out message
+	        mProgressBar.setProgress(20);
+	        mHandler.sendMessage(mHandler.obtainMessage(MSG_SET_TEXT, "Untarring Fastcomp backend..."));
+	           	//get asset
+	        File fastcompdata = new File(worker, "fastcomp.data.tar.gz");
+	        filemanager.extractAsset(activity.getApplicationContext(), "fastcomp.data.tar.gz.mp3", fastcompdata);
+	        	//run untar command
+	        pp = Runtime.getRuntime().exec(busytar.getPath()+" tar -C "+filesdir.getPath()+" -xzf "+fastcompdata.getPath(),env,filesdir);
+	        pp.waitFor();
+	        
+            //extract emscripten
+        	//give out message
+	        mProgressBar.setProgress(75);
+	        mHandler.sendMessage(mHandler.obtainMessage(MSG_SET_TEXT, "Untarring Emscripten..."));
+	           	//get asset
+	        File emscriptendata = new File(worker, "emscripten.data.tar.gz");
+	        filemanager.extractAsset(activity.getApplicationContext(), "emscripten.data.tar.gz.mp3", emscriptendata);
+	        	//run untar command
+	        pp = Runtime.getRuntime().exec(busytar.getPath()+" tar -C "+filesdir.getPath()+" -xzf "+emscriptendata.getPath(),env,filesdir);
+	        pp.waitFor();
+	        
+	        mProgressBar.setProgress(100);
+
+            
+//            pp = Runtime.getRuntime().exec(busybox.getPath()+" --install -s "+bbindir.getPath());
+            pp = Runtime.getRuntime().exec(busytar.getPath()+" --install -s "+busyboxbin.getPath(),env,busyboxbin);
+            pp.waitFor();
+
+            //Now delete the SU link.. too much confusion..
+            File su = new File(busyboxbin.getPath(),"su");
+            su.delete();
+
+
+            filemanager.deleteFolder(worker);
+
+            
+        } catch (Exception iOException) {
+            Log.v("SpartacusRex", "INSTALL SYSTEM EXCEPTION : "+iOException);
+        }
+
+        //Its done..
+
+        Log.v("SpartacusRex", "Finished Binary Install");
     }
 
     private void installLocalFile() {
@@ -373,6 +530,7 @@ public class InstallProgress extends Activity {
             Log.e(LOG_TAG, "unzip", e);
         }
     }
+    
 
     private void backupAll(File dest){
         String src = getApplicationContext().getFilesDir().getPath()+"/vim";

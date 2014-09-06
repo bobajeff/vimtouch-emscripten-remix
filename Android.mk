@@ -30,7 +30,7 @@ LOCAL_SRC_FILES := $(call all-subdir-java-files)
 
 LOCAL_PACKAGE_NAME := VimTouch
 
-LOCAL_JNI_SHARED_LIBRARIES := libvimtouch libncurses
+LOCAL_JNI_SHARED_LIBRARIES := libvimtouch liblua libncurses
 
 include $(BUILD_PACKAGE)
 
