@@ -39,5 +39,6 @@
               <isset property="version"/>
         </condition>
         <copy tofile="${basedir}/libs/${version}/libvimexec.so" file="${basedir}/libs/${version}/vim" overwrite="true" />
+        <copy tofile="${basedir}/libs/${version}/libcom_googlecode_android_scripting_Exec.so" file="${basedir}/pythonlib/libcom_googlecode_android_scripting_Exec.so" overwrite="true" />
     </target>
 </project>

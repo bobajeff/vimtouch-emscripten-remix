@@ -37,11 +37,11 @@ X_PRE_LIBS	=
 X_EXTRA_LIBS	= 
 X_LIBS		= 
 
-LUA_LIBS	= 
-LUA_SRC		= 
-LUA_OBJ		= 
-LUA_CFLAGS	= 
-LUA_PRO		= 
+LUA_LIBS	= -L/usr/lib -llua5.2
+LUA_SRC		= if_lua.c
+LUA_OBJ		= objects/if_lua.o
+LUA_CFLAGS	= -I/usr/include/lua5.2
+LUA_PRO		= if_lua.pro
 
 MZSCHEME_LIBS	= 
 MZSCHEME_SRC	= 
