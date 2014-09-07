@@ -1,0 +1,50 @@
+For the most part the Building of these files follows the guid detailed here:
+http://mortoray.com/2012/08/21/android-ndk-cross-compile-setup-libpng-and-freetype/
+As in:
+_______________________________________
+PLATFORM_PREFIX=/opt/android-ext/
+NDK_PATH=/opt/android-ndk-r8b/
+NDK_PLATFORM=android-9
+cd /path/to/project
+./configure --host=arm-linux-androideabi --prefix=$PLATFORM_PREFIX
+make
+make install
+________________________________________
+
+
+
+The fastcomp (LLVM/Clang) build is based on the 1.22.1 releases of their respective projects:
+https://github.com/kripken/emscripten-fastcomp/releases/tag/1.22.1
+https://github.com/kripken/emscripten-fastcomp-clang/releases/tag/1.22.1
+  Note: They are made to only work with this version of emscripten:
+https://github.com/kripken/emscripten/releases/tag/1.22.1
+
+To build Fastcomp requires that you extract the emscripten-fastcomp source first then emscripten-fastcomp-Clang files rename it clang and move it to the tools subdirectory of emscripten-fastcomp.
+Then Apply the ndk_platform9_compat.diff to it. Then export the path as noted above. Then do:
+____________________________________________
+mkdir build
+cd build
+../configure --enable-optimized --disable-assertions --enable-targets=host,js --host=arm-linux-androideabi --prefix=$PLATFORM_PREFIX
+make
+KEEP_SYMBOLS=1 make install
+___________________________________________
+
+The python build is simply the build of python27 fork of Python4Android on 
+https://android-python27.googlecode.com/files/PythonAPK.apk
+GitHub link here:
+https://github.com/devpack/android-python27
+
+
+The Nodejs build is just node-v0.11.9 gotten from here and the only patch used was specific to my toolchain setup:
+http://nodejs.org/dist/v0.11.9/node-v0.11.9.tar.gz
+The build instructions are just very simple just export the paths and do:
+___________________________________________
+source ./android-configure $NDK_PATH
+make
+make install
+___________________________________________
+
+The Busybox build is taken from Terminal IDE from here:
+https://terminal-ide.googlecode.com/files/terminalide-src-2.02.tar.gz
+Just extract it and it's in the assets directory.
+
